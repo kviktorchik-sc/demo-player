@@ -1,6 +1,7 @@
-# Getting Started with Create React App
+# Demo Player App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project combines [hls.js](https://github.com/video-dev/hls.js) and [dash.js](https://github.com/Dash-Industry-Forum/dash.js) features into a single player app.
+
 
 ## Available Scripts
 
