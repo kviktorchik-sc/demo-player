@@ -1,8 +1,8 @@
 import React from "react";
 import "./App.css";
 
-import Hls from "hls.js";
-import dash from "dashjs";
+import HLS from "hls.js";
+import DASH from "dashjs";
 
 const isHLS = (url) => {
   return url.includes(".m3u8");
@@ -13,7 +13,7 @@ const isDASH = (url) => {
 };
 
 const setupHLSPlayer = (stream, playerRef) => {
-  if (!Hls.isSupported()) {
+  if (!HLS.isSupported()) {
     console.error("HLS is not supported in this browser.");
     return false;
   }
@@ -27,10 +27,11 @@ const setupHLSPlayer = (stream, playerRef) => {
               licenseUrl: stream.license_url,
             },
           },
+          backBufferLength: 30, // https://github.com/video-dev/hls.js/blob/master/docs/API.md#backbufferlength
         }
       : undefined;
 
-    const hls = new Hls(config);
+    const hls = new HLS(config);
     hls.loadSource(stream.src);
     hls.attachMedia(playerRef);
 
@@ -44,8 +45,14 @@ const setupHLSPlayer = (stream, playerRef) => {
 
 const setupDASHPlayer = (stream, playerRef) => {
   try {
-    const player = dash.MediaPlayer().create();
+    const player = DASH.MediaPlayer().create();
     player.initialize(playerRef, stream.src, true);
+    player.updateSettings({
+      "streaming": {
+        "bufferToKeep": 30, // https://cdn.dashjs.org/latest/jsdoc/module-Settings.html#~Buffer:~:text=buffer%20in%20seconds.-,bufferToKeep,-number
+      }
+    });
+
     if (stream.license_url) {
       player.setProtectionData({
         "com.widevine.alpha": {
